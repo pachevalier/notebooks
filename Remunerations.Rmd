@@ -1,0 +1,27 @@
+---
+title: "Rémunérations dans la fonction publique"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+* [gist](https://gist.github.com/pachevalier/61ae17ca3c284b46ca2204ab4223d489)
+
+```{r setup, message=FALSE}
+library("tidyverse")
+```
+
+## Exploration des données
+
+```{r, message=FALSE}
+"https://www.data.gouv.fr/fr/datasets/r/350efeac-245a-405a-8384-143866552806" %>%
+  read_csv2() %>%
+  names()
+```
+
+```{r, message=FALSE}
+"https://www.data.gouv.fr/fr/datasets/r/15e882bb-2ba1-4456-8f1d-66ec750631fa" %>%
+  read_csv2() %>%
+  names()
+```
+
