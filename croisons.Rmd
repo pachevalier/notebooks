@@ -1,0 +1,52 @@
+---
+title: 'DataGouv x CodeGouv : #Croisonsles'
+output:
+  html_document:
+    df_print: paged
+---
+
+DataGouv recense les données publiques. CodeGouv, les codes sources produits par les administrations. Dans la vraie vie, il arrive que des codes source utilisent ou génèrent des données mais à ce jour on n'a pas fait le lien entre DataGouv et CodeGouv.
+
+Et si on essayait de les croiser ?
+
+Certaines ressources et réutilisations de DataGouv renvoie vers des URL vers le code source. En apparient la liste des URL qu'on trouve dans la liste des réutilisations et la liste des ressources DataGouv avec la liste des URL des dépôts de codes source de CodeGouv, on peut avoir une première liste de codes sources ouverts produits par des administrations qui utilisent ou génèrent des données OpenData.
+
+
+```{r echo=FALSE, message=FALSE}
+# https://raw.githubusercontent.com/etalab/data-codes-sources-fr/master/data/repertoires/csv/all.csv
+# https://www.data.gouv.fr/fr/datasets/r/970aafa0-3778-4d8b-b9d1-de937525e379
+# https://www.data.gouv.fr/fr/datasets/r/970aafa0-3778-4d8b-b9d1-de937525e379
+library("tidyverse")
+library("DT")
+knitr::opts_chunk$set(echo=FALSE, results = "asis", message=FALSE, warning=FALSE)
+table_resources <- read_csv2("data-raw/export-resource-20200919-074817.csv") %>%
+  select(dataset.id, id, url) %>%
+  inner_join(
+    y = read_csv("data-raw/all.csv") %>%
+      select(nom, repertoire_url),
+    by = c("url" = "repertoire_url")
+  )
+table_reuses <- read_csv2("data-raw/export-reuse-20200919-074924.csv") %>%
+  select(id, remote_url) %>%
+  inner_join(
+    y = read_csv("data-raw/all.csv") %>%
+      select(nom, repertoire_url),
+    by = c("remote_url" = "repertoire_url")
+  )
+write_csv(x = table_resources, path = "datacodegouv_resources.csv")
+write_csv(x = table_reuses, path = "datacodegouv_reuses.csv")
+```
+
+## `r table_resources %>% nrow()` ressources reliées à CodeGouv
+
+```{r, echo=FALSE, message=FALSE, results='asis'}
+table_resources %>%
+  datatable()
+```
+
+## `r table_reuses %>% nrow()` réutilisations reliées à CodeGouv
+
+```{r}
+table_reuses %>%
+  datatable()
+```
