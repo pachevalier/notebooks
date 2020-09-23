@@ -5,9 +5,9 @@ output:
     df_print: paged
 ---
 
-DataGouv recense les données publiques. CodeGouv, les codes sources produits par les administrations. Dans la vraie vie, il arrive que des codes source utilisent ou génèrent des données mais à ce jour on n'a pas fait le lien entre DataGouv et CodeGouv.
+DataGouv recense les données publiques. CodeGouv, les codes sources produits par les administrations. Dans la vraie vie, il arrive que des codes source utilisent ou génèrent des données mais à ce jour, il n'y a pas de lien direct entre DataGouv et CodeGouv.
 
-Et si on essayait de les croiser ?
+Et si on essayait ?
 
 Certaines ressources et réutilisations de DataGouv renvoie vers des URL vers le code source. En apparient la liste des URL qu'on trouve dans la liste des réutilisations et la liste des ressources DataGouv avec la liste des URL des dépôts de codes source de CodeGouv, on peut avoir une première liste de codes sources ouverts produits par des administrations qui utilisent ou génèrent des données OpenData.
 
@@ -41,12 +41,24 @@ write_csv(x = table_reuses, path = "datacodegouv_reuses.csv")
 
 ```{r, echo=FALSE, message=FALSE, results='asis'}
 table_resources %>%
-  datatable()
+  mutate(
+    data_url = paste0('https://www.data.gouv.fr/datasets/', dataset.id), 
+    dataset.id = paste0("<a href=\"", data_url, "\" </a>", dataset.id, "</a>"), 
+    url = paste0("<a href=\"", url, "\" </a>", url, "</a>")
+    ) %>%
+  select(nom, url, dataset.id) %>%
+  datatable(escape = FALSE)
 ```
 
 ## `r table_reuses %>% nrow()` réutilisations reliées à CodeGouv
 
 ```{r}
 table_reuses %>%
-  datatable()
+  mutate(
+    data_url = paste0('https://www.data.gouv.fr/datasets/', id), 
+    id = paste0("<a href=\"", data_url, "\" </a>", id, "</a>"), 
+    url = paste0("<a href=\"", remote_url, "\" </a>", remote_url, "</a>")
+    ) %>%
+  select(nom, url, id) %>%
+  datatable(escape = FALSE)
 ```
